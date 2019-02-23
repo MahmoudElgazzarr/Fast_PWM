@@ -48,6 +48,17 @@
 #define COM1B0 4
 #define COM1B1 5
 
+#define One 1
+#define Eight 8
+#define Hundred 100
+#define Max 0xFF
+
+/*Header To PWM_inti()*/
+#define TWENTY_FIVE 25
+
+/*Masking For First and Last 8 bits */
+#define First_8bits_Mask 0x00FF
+#define Last_8bits_Mask 0xFF00
 
 /*PINS FOR TCCR1B */
 #define WGM13 4

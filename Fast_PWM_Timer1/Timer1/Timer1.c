@@ -14,17 +14,20 @@ void Pwm_init(uint8 duty_Cycle)
 	
 	
 	
-	/* set TOP to 16bit */
-	ICR1H = 0xFF;
-	ICR1L = 0xFF;
-	uint16 Top = (((uint16)(ICR1H) & 0x00FF) << 8) + ( ICR1L );
-	uint32 OCRR = (uint32) ((( duty_Cycle * (uint32) Top) + 1 ) / 100);
-	/* set PWM for 25% duty cycle @ 16bit  0x3F 0xFF*/
-	OCR1AH = (uint8)((OCRR & 0xFF00)>>8);
-	OCR1AL = (uint8)( OCRR & 0x00FF);
+	/* set TOP to 16bit to max */
+	ICR1H = Max;
+	ICR1L = Max;
 	
-	//OCR1AH = 0x3f;
-	//OCR1AL = 0xff;
+	/*Setting Top Variable*/
+	uint16 Top = (((uint16)(ICR1H) & First_8bits_Mask ) << Eight ) + ( ICR1L );
+	
+	/*Setting OCRR Variable to Write To Registers High and LOW */
+	uint32 OCRR = (uint32) ((( duty_Cycle * (uint32) Top) + One ) / Hundred );
+	
+	/* set PWM for 25% duty cycle @ 16bit  0x3F 0xFF*/
+	OCR1AH = (uint8)((OCRR & Last_8bits_Mask )>>8);
+	OCR1AL = (uint8)( OCRR & First_8bits_Mask );
+	
 	/* set PWM for 75% duty cycle @ 16bit */
 	OCR1BH = 0xBF;
 	OCR1BL = 0xFF;

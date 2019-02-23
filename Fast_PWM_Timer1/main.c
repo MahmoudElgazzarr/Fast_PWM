@@ -26,7 +26,7 @@ int main(void)
 	DIO_SetPinDirection(PIN31 , OUTPUT);
 	
 	/*intailize PWM*/
-	Pwm_init(25);
+	Pwm_init(TWENTY_FIVE);
 	while (1)
 	{
 	/*Setting Direction For Motor 2*/

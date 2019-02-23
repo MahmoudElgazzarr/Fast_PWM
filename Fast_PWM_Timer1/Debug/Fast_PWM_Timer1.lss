@@ -696,7 +696,7 @@ int main(void)
  460:	0e 94 26 01 	call	0x24c	; 0x24c <DIO_SetPinDirection>
 	
 	/*intailize PWM*/
-	Pwm_init(25);
+	Pwm_init(TWENTY_FIVE);
  464:	89 e1       	ldi	r24, 0x19	; 25
  466:	0e 94 46 02 	call	0x48c	; 0x48c <Pwm_init>
 	while (1)
@@ -743,20 +743,22 @@ void Pwm_init(uint8 duty_Cycle)
 	
 	
 	
-	/* set TOP to 16bit */
-	ICR1H = 0xFF;
+	/* set TOP to 16bit to max */
+	ICR1H = Max;
  4a2:	87 e4       	ldi	r24, 0x47	; 71
  4a4:	90 e0       	ldi	r25, 0x00	; 0
  4a6:	2f ef       	ldi	r18, 0xFF	; 255
  4a8:	fc 01       	movw	r30, r24
  4aa:	20 83       	st	Z, r18
-	ICR1L = 0xFF;
+	ICR1L = Max;
  4ac:	86 e4       	ldi	r24, 0x46	; 70
  4ae:	90 e0       	ldi	r25, 0x00	; 0
  4b0:	2f ef       	ldi	r18, 0xFF	; 255
  4b2:	fc 01       	movw	r30, r24
  4b4:	20 83       	st	Z, r18
-	uint16 Top = (((uint16)(ICR1H) & 0x00FF) << 8) + ( ICR1L );
+	
+	/*Setting Top Variable*/
+	uint16 Top = (((uint16)(ICR1H) & First_8bits_Mask ) << Eight ) + ( ICR1L );
  4b6:	87 e4       	ldi	r24, 0x47	; 71
  4b8:	90 e0       	ldi	r25, 0x00	; 0
  4ba:	fc 01       	movw	r30, r24
@@ -775,7 +777,9 @@ void Pwm_init(uint8 duty_Cycle)
  4d4:	93 1f       	adc	r25, r19
  4d6:	9a 83       	std	Y+2, r25	; 0x02
  4d8:	89 83       	std	Y+1, r24	; 0x01
-	uint32 OCRR = (uint32) ((( duty_Cycle * (uint32) Top) + 1 ) / 100);
+	
+	/*Setting OCRR Variable to Write To Registers High and LOW */
+	uint32 OCRR = (uint32) ((( duty_Cycle * (uint32) Top) + One ) / Hundred );
  4da:	8f 81       	ldd	r24, Y+7	; 0x07
  4dc:	28 2f       	mov	r18, r24
  4de:	30 e0       	ldi	r19, 0x00	; 0
@@ -807,8 +811,9 @@ void Pwm_init(uint8 duty_Cycle)
  516:	9c 83       	std	Y+4, r25	; 0x04
  518:	ad 83       	std	Y+5, r26	; 0x05
  51a:	be 83       	std	Y+6, r27	; 0x06
+	
 	/* set PWM for 25% duty cycle @ 16bit  0x3F 0xFF*/
-	OCR1AH = (uint8)((OCRR & 0xFF00)>>8);
+	OCR1AH = (uint8)((OCRR & Last_8bits_Mask )>>8);
  51c:	2b e4       	ldi	r18, 0x4B	; 75
  51e:	30 e0       	ldi	r19, 0x00	; 0
  520:	8b 81       	ldd	r24, Y+3	; 0x03
@@ -824,15 +829,13 @@ void Pwm_init(uint8 duty_Cycle)
  534:	bb 27       	eor	r27, r27
  536:	f9 01       	movw	r30, r18
  538:	80 83       	st	Z, r24
-	OCR1AL = (uint8)( OCRR & 0x00FF);
+	OCR1AL = (uint8)( OCRR & First_8bits_Mask );
  53a:	8a e4       	ldi	r24, 0x4A	; 74
  53c:	90 e0       	ldi	r25, 0x00	; 0
  53e:	2b 81       	ldd	r18, Y+3	; 0x03
  540:	fc 01       	movw	r30, r24
  542:	20 83       	st	Z, r18
 	
-	//OCR1AH = 0x3f;
-	//OCR1AL = 0xff;
 	/* set PWM for 75% duty cycle @ 16bit */
 	OCR1BH = 0xBF;
  544:	89 e4       	ldi	r24, 0x49	; 73
