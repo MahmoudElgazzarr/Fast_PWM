@@ -26,11 +26,12 @@
 #define ICR1L (*(volatile uint8 *)0x46)
 
 #define OCR1BH (*(volatile uint8 *)0x49)
-#define OCR1BH (*(volatile uint8 *)0x48)
+#define OCR1BL (*(volatile uint8 *)0x48)
 
 /*Timer Counter Control Register A*/
 #define TCCR1A (*(volatile uint8 *)0x4F)
 #define TCCR1B (*(volatile uint8 *)0x4E)
+#define OCR1BL (*(volatile uint8 *)0x48)
 
 
 #define COM1A0 6
@@ -40,10 +41,18 @@
 #define WGM11 1
 #define WGM12 3
 
+/*For Prescaler*/
+#define CS10 0
+#define CS11 1
+
+#define COM1B0 4
+#define COM1B1 5
+
+
 /*PINS FOR TCCR1B */
 #define WGM13 4
 
-void Pwm_init();
+void Pwm_init(uint8 duty_Cycle);
 
 
 #endif /* TIMER1_H_ */

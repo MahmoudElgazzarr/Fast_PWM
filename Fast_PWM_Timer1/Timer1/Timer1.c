@@ -8,28 +8,39 @@
 #include "DIO_Registers_Definitions.h"
 #include "Timer1.h"
 
-void Pwm_init()
+
+void Pwm_init(uint8 duty_Cycle)
 {
-	/*Set Pin Direction For Pins as OUTPUT*/
-	DIO_SetPinDirection(PIN28 , OUTPUT);
-	DIO_SetPinDirection(PIN29 , OUTPUT);
-	/*TCNT1H equal zero and TCNT1L equal zero*/
-	TCNT1H = 0x00;
-	TCNT1L = 0x00;
-	/*Timer Counter Control Register*/
-	TCCR1A |= (1<<COM1A0);
-	TCCR1B |= (1<<COM1A1);
-	/*Set For Mode 14 For OCR1A*/
-	TCCR1A &=~(1<<WGM10);
-	TCCR1A |= (1<<WGM11);
-	/*For Mode 14 For OCR1B */
-	TCCR1B |= (1<<WGM12);
-	TCCR1B |= (1<<WGM13);
-	/*Top Value ICR1H & ICR1L*/
-	ICR1H = 0x06;
-	ICR1L = 0x3F;
-	/*OCR1H && OCR1L*/
-	/*0x03 0x20*/
-	OCR1AH = 0x06;
-	OCR1AL = 0x3F;
+	
+	
+	
+	/* set TOP to 16bit */
+	ICR1H = 0xFF;
+	ICR1L = 0xFF;
+	uint16 Top = (((uint16)(ICR1H) & 0x00FF) << 8) + ( ICR1L );
+	uint32 OCRR = (uint32) ((( duty_Cycle * (uint32) Top) + 1 ) / 100);
+	/* set PWM for 25% duty cycle @ 16bit  0x3F 0xFF*/
+	OCR1AH = (uint8)((OCRR & 0xFF00)>>8);
+	OCR1AL = (uint8)( OCRR & 0x00FF);
+	
+	//OCR1AH = 0x3f;
+	//OCR1AL = 0xff;
+	/* set PWM for 75% duty cycle @ 16bit */
+	OCR1BH = 0xBF;
+	OCR1BL = 0xFF;
+	
+
+	/* set none-inverting mode */
+	TCCR1A |= (1 << COM1A1)|(1 << COM1B1);
+	
+
+	/* set Fast PWM mode using ICR1 as TOP */
+	TCCR1A |= (1 << WGM11);
+	TCCR1B |= (1 << WGM12)|(1 << WGM13);
+	
+	
+	/* START the timer with no prescaler */
+	TCCR1B |= (1 << CS10);
+	
+	
 }

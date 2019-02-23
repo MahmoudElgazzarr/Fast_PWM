@@ -13,6 +13,11 @@
 
 int main(void)
 {
+	
+	/*Set Pin Direction For Pins as OUTPUT*/
+	DIO_SetPinDirection(PIN28 , OUTPUT);
+	DIO_SetPinDirection(PIN29 , OUTPUT);
+	
 	/*Setting Direction For Motor 1 Right or Left*/
 	DIO_SetPinDirection(PIN26 , OUTPUT);
 	DIO_SetPinDirection(PIN27 , OUTPUT);
@@ -20,14 +25,16 @@ int main(void)
 	DIO_SetPinDirection(PIN30 , OUTPUT);
 	DIO_SetPinDirection(PIN31 , OUTPUT);
 	
-	
+	/*intailize PWM*/
+	Pwm_init(25);
+	while (1)
+	{
 	/*Setting Direction For Motor 2*/
 	DIO_WritePin(PIN30,HIGH);
 	DIO_WritePin(PIN31,LOW);
-	/*intailize PWM*/
-	Pwm_init();
-    while (1) 
-    {
-    }
+	/*Setting Direction For Motor 1*/
+	DIO_WritePin(PIN26,HIGH);
+	DIO_WritePin(PIN27,LOW);
+	}
+	
 }
-
